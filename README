@@ -1,1 +1,61 @@
-jQuery module to execute SQL server-side queries and return results to the browser by manipulating the Database Connections exposed by Livelink's WebForm Module.  This enables client-side SQL queries via a Livelink instance in a Javascript/jQuery dialect.
+A jQuery module that executes SQL queries via a Livelink server and provides JSON results for use in the webbrowser.  It works by manipulating the Database Connections exposed by Livelink's WebForm Module.  This enables client-side SQL queries via a Livelink instance in a Javascript/jQuery dialect.
+
+If you have a Livelink Enterprise Server with the WebForms module installed, and a Database Connection configured with the name "LL971", then use this module like so:
+
+<html>
+<head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+	<script type="text/javascript" src="https://github.com/freddybowen/livelink.hacks/raw/master/fb.llquery.js"></script>
+</head>
+<body>
+<div id="main">
+	<select id="ddl">
+		<option value="-1">ALL</option>
+	</select>
+</div>
+<script type="text/javascript" language="javascript">
+$(document).ready(function(){
+
+	var llqry = {
+		llcgi: '/llisapi.dll', 	// the Livelink CGI path
+		urlparams: {
+			/* "SQL Database Name" from 
+				"Web Forms Database Lookup Administation > 
+				Add Database Connection Information"
+			*/
+			server:     'LL971',
+
+			/* the name of a SQL view/function/table that
+			   exists in above database 
+			*/
+			tableName:  "dbo.DTree",
+
+			/* asterisk or comma-delimited list of columns */
+			columns:    'dataid,name'
+		},
+		data: null,
+		elem: $('#ddl')
+	};
+
+	$.FB.LLQuery.get(
+		llqry.llcgi,
+		llqry.urlparams,
+		function(data){
+			var e=llqry.elem,
+				opt = ['<option value="', -1, '">', -1, '</option>'],
+				html = [];
+
+			for (var l=data['dataid'].length,i=0; i<l; i++){
+				opt[1] = data.dataid[i];
+				opt[3] = data.name[i];
+				html[i] = opt.join('');
+			}
+
+			e.append(html.join(''));
+			e.val(-1).focus();
+		}
+	);
+
+});
+
+</html>
