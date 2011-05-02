@@ -1,0 +1,1 @@
+jQuery module to execute SQL server-side queries and return results to the browser by manipulating the Database Connections exposed by Livelink's WebForm Module.  This enables client-side SQL queries via a Livelink instance in a Javascript/jQuery dialect.
